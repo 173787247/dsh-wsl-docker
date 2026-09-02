@@ -11,12 +11,12 @@ export function apply(ctx, config = {}) {
   ctx.systemPrompt.section({
     name: "tool:docker_doctor",
     order: 120,
-    text: "Use docker_doctor for WSL/Windows interop: Report Docker Desktop vs WSL docker context confusion.",
+    text: "Use docker_doctor for Docker Desktop vs WSL daemon confusion, and for vLLM/OpenAI containers on port 8000 (focus=vllm). Pair with host_reach when checking baseURL.",
   });
 
   ctx.tools.register({
     name: "docker_doctor",
-    description: "Report Docker Desktop vs WSL docker context confusion.",
+    description: "Diagnose Docker in WSL (Desktop vs Engine) and list vLLM/OpenAI-like containers (port 8000). Use focus=vllm for LLM containers.",
     parameters: core.parameters(config),
     output: {
       schema: core.outputSchema(),
