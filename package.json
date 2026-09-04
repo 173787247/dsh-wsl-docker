@@ -1,7 +1,7 @@
 {
   "name": "dsh-wsl-docker",
-  "version": "0.2.1",
-  "description": "Docker Desktop vs WSL context doctor, vLLM :8000 health and GPU runtime hints.",
+  "version": "0.2.2",
+  "description": "Docker Desktop vs WSL context doctor; vLLM :8000 health with HTTP 404 ≠ API ready.",
   "license": "MIT",
   "repository": {
     "type": "git",
