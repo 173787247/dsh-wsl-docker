@@ -46,4 +46,15 @@ describe("docker_doctor", () => {
     assert.match(blob, /GPU runtime|nvidia/i);
     assert.match(blob, /host_reach|gpu_doctor/i);
   });
+
+  it("hints http 404 separately from generic health fail", () => {
+    const hints = buildVllmHints(
+      [{ name: "v", image: "vllm/vllm-openai", ports: "0.0.0.0:8000->8000/tcp", publishes8000: true }],
+      {
+        daemonOk: true,
+        portHealth: { ok: false, status: 404, url: "http://127.0.0.1:8000/v1/models", error: "" },
+      },
+    );
+    assert.ok(hints.some((h) => /404/.test(h) && /apiReady/i.test(h)));
+  });
 });
