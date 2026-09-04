@@ -1,14 +1,15 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { buildVllmHints, format, parameters } from "../lib/docker.js";
+import { buildVllmHints, containerHasGpuRuntime, format, parameters, probeHttpHealth } from "../lib/docker.js";
 
 describe("docker_doctor", () => {
   it("formats", () => {
     assert.match(
       format({
         ok: true,
-        containers: [{ name: "vllm", image: "vllm/vllm-openai", ports: "0.0.0.0:8000->8000/tcp" }],
+        containers: [{ name: "vllm", image: "vllm/vllm-openai", ports: "0.0.0.0:8000->8000/tcp", publishes8000: true }],
         vllmHints: ["check host_reach"],
+        portHealth: { ok: true, status: 200, url: "http://127.0.0.1:8000/v1/models" },
       }),
       /vllm/i,
     );
@@ -25,9 +26,24 @@ describe("docker_doctor", () => {
 
   it("names matching containers", () => {
     const hints = buildVllmHints(
-      [{ name: "my-vllm", image: "vllm/vllm-openai:latest", ports: "8000/tcp" }],
+      [{ name: "my-vllm", image: "vllm/vllm-openai:latest", ports: "8000/tcp", publishes8000: true }],
       { daemonOk: true },
     );
     assert.ok(hints.some((h) => /my-vllm/.test(h)));
+  });
+
+  it("detects nvidia runtime and injectable health", async () => {
+    assert.equal(containerHasGpuRuntime({ HostConfig: { Runtime: "nvidia" } }), true);
+    const health = await probeHttpHealth("http://127.0.0.1:8000/v1/models", {
+      fetchFn: async () => ({ ok: true, status: 200 }),
+    });
+    assert.equal(health.ok, true);
+    const hints = buildVllmHints(
+      [{ name: "v", image: "vllm/vllm-openai", ports: "0.0.0.0:8000->8000/tcp", publishes8000: true }],
+      { daemonOk: true, portHealth: health, gpuOnHits: false },
+    );
+    const blob = hints.join("\n");
+    assert.match(blob, /GPU runtime|nvidia/i);
+    assert.match(blob, /host_reach|gpu_doctor/i);
   });
 });

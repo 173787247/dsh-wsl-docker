@@ -1,7 +1,7 @@
 {
   "name": "dsh-wsl-docker",
-  "version": "0.2.0",
-  "description": "Docker Desktop vs WSL context doctor, plus vLLM/OpenAI container hints (port 8000).",
+  "version": "0.2.1",
+  "description": "Docker Desktop vs WSL context doctor, vLLM :8000 health and GPU runtime hints.",
   "license": "MIT",
   "repository": {
     "type": "git",
