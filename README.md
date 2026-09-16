@@ -6,6 +6,18 @@ DeepSeek Harness plugin: Docker Desktop vs WSL engine doctor, plus **vLLM / Open
 
 [中文说明 → README.zh.md](./README.zh.md)
 
+## Where it sits
+
+Checks Docker Desktop versus the WSL context, and whether a local inference port is actually an API.
+
+```mermaid
+flowchart LR
+  agent["dsh agent"] --> tool["docker_doctor"] --> docker["Docker context and local API"]
+```
+
+Suite diagram and version snapshot: [dsh-wsl-kit](https://github.com/173787247/dsh-wsl-kit#how-the-pieces-fit). This plugin is **0.2.2** (full; also in llm). Do not copy that matrix into this README.
+
+
 ## Compatibility
 
 | Field | Value |
